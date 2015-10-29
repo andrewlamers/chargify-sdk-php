@@ -34,6 +34,7 @@ use GuzzleHttp\Client,
     Crucial\Service\Chargify\Subscription,
     Crucial\Service\Chargify\Transaction,
     Crucial\Service\Chargify\Webhook;
+use GuzzleHttp\Psr7\Request;
 
 class Chargify
 {
@@ -157,7 +158,7 @@ class Chargify
 
         $client  = $this->getHttpClient();
         $path    = '/' . $path . '.' . $this->_format;
-        $request = $client->createRequest($method, $path, []);
+        $request = new Request($method, $path);
 
         // set headers if POST or PUT
         if (in_array($method, array('POST', 'PUT'))) {
