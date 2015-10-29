@@ -172,7 +172,7 @@ abstract class AbstractEntity implements \ArrayAccess, \Iterator, \Countable
     public function getResponseArray($response)
     {
         $return = array();
-        if (!($response instanceof \GuzzleHttp\Message\Response)) {
+        if (!($response instanceof \GuzzleHttp\Psr7\Response)) {
             $this->_errors['Crucial_Service_Chargify']['networking error'] = 'no response';
 
             return $return;
