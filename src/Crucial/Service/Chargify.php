@@ -109,16 +109,15 @@ class Chargify
         $this->_sharedKey = $config['shared_key'];
 
         $this->httpClient = new Client([
-            'base_url' => 'https://' . $this->_hostname,
-            'defaults' => [
-                'timeout'         => 10,
-                'allow_redirects' => false,
-                'auth'            => [$this->_apiKey, $this->_password],
-                'headers'         => [
-                    'User-Agent'   => 'chargify-sdk-php/1.0 (https://github.com/crucialwebstudio/chargify-sdk-php)',
-                    'Content-Type' => 'application/' . $this->_format
-                ]
+            'base_uri' => 'https://' . $this->_hostname,
+            'timeout'         => 10,
+            'allow_redirects' => false,
+            'auth'            => [$this->_apiKey, $this->_password],
+            'headers'         => [
+                'User-Agent'   => 'chargify-sdk-php/1.0 (https://github.com/crucialwebstudio/chargify-sdk-php)',
+                'Content-Type' => 'application/' . $this->_format
             ]
+
         ]);
     }
 
@@ -207,7 +206,7 @@ class Chargify
             $response = $client->send($request);
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
-                $response = $e->getResponse();
+                $response = $e->getBody();
             } else {
                 $response = false;
             }
