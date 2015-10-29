@@ -157,7 +157,7 @@ class Chargify
 
         $client  = $this->getHttpClient();
         $path    = '/' . $path . '.' . $this->_format;
-        $request = $client->createRequest($method, $path);
+        $request = $client->createRequest($method, $path, []);
 
         // set headers if POST or PUT
         if (in_array($method, array('POST', 'PUT'))) {
