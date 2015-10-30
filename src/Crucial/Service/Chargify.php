@@ -143,7 +143,7 @@ class Chargify
      * Send the request to Chargify
      *
      * @param string $path   URL path we are requesting such as: /subscriptions/<subscription_id>/adjustments
-     * @param string $method GET, POST, PUST, DELETE
+     * @param string $method GET, POST, PUT, DELETE
      * @param string $rawData
      * @param array  $params
      *
@@ -158,6 +158,8 @@ class Chargify
         $client  = $this->getHttpClient();
         $path    = '/' . $path . '.' . $this->_format;
         $request = new Request($method, $path);
+        $options = [];
+        $body = null;
 
         // set headers if POST or PUT
         if (in_array($method, array('POST', 'PUT'))) {
@@ -166,47 +168,32 @@ class Chargify
             }
 
             if (!empty($params)) {
-                $request->setQuery($params);
+                $options['query'] = $params;
             }
 
-            $request->setBody(Stream::factory($rawData));
+            $body = $rawData;
         }
 
         // set headers if GET or DELETE
         if (in_array($method, array('GET', 'DELETE'))) {
 
             if (!empty($rawData)) {
-                $request->setBody(Stream::factory($rawData));
+                $body = $rawData;
             }
 
             if (!empty($params)) {
-                $request->setQuery($params);
-
-//                foreach ($params as $k => $v) {
-//                    /**
-//                     * test for array and adjust URI accordingly
-//                     * this is needed for ?kinds[]=charge&kinds[]=info since \Zend_Http_Client
-//                     * doesn't handle this well with setParameterGet()
-//                     */
-//                    if (is_array($v)) {
-//                        $uri = '?';
-//                        foreach ($v as $value) {
-//                            $uri .= $k . '[]=' . $value . '&';
-//                        }
-//                        $uri = $client->getUri(TRUE) . trim($uri, '&');
-//                        $client->setUri($uri);
-//                    } else {
-//                        $client->setParameterGet($k, $v);
-//                    }
-//                }
+                $options['query'] = $params;
             }
+
+
         }
 
         try {
+            $request = new Request($method, $path, $options, $body);
             $response = $client->send($request);
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
-                $response = $e->getBody();
+                $response = $e->getResponse();
             } else {
                 $response = false;
             }
